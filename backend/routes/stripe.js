@@ -46,7 +46,7 @@ router.post("/create-coupon", (req, res, next) => {
       return res.status(200).json({ response: response });
     })
     .catch((err) => {
-      console.log(err);
+      console.log("Error: ", err);
       return res.status(500).json({ error: "Unable to create coupon code" });
     });
 });

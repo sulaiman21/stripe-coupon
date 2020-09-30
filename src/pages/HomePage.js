@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import { connect } from "react-redux";
 
 import Navbar from "../components/Navbar";
 import CouponGenerator from "../components/CouponGenerator";
@@ -7,71 +8,25 @@ import HOC from "../HOC/HOC";
 
 import Loader from "../components/Loader";
 import AlertComponent from "../components/Alert";
-import http from "../configs/http";
-import { urls } from "../configs/urls";
 
 export class HomePage extends PureComponent {
-  state = {
-    showLoader: false,
-    showAlert: false,
-    alertSuccess: false,
-    data: [],
-  };
-
-  getCouponList = () => {
-    http.post(urls.getCouponCodes).then((res) => {
-      this.setState({ data: res.data.response.data });
-    });
-  };
-
-  componentDidMount() {
-    //on home page load, get all coupon codes
-    this.setState({ showLoader: true });
-    http
-      .post(urls.getCouponCodes)
-      .then((res) => {
-        this.setState({
-          showLoader: false,
-          showAlert: true,
-          alertSuccess: true,
-          data: res.data.response.data,
-        });
-        return;
-      })
-      .catch((err) => {
-        this.setState({
-          showLoader: false,
-          showAlert: true,
-          alertSuccess: false,
-        });
-        console.log("Error: ", err);
-        return;
-      });
-  }
-
   render() {
-    const { showLoader, showAlert, alertSuccess, data } = this.state;
     return (
       <>
-        <Loader show={showLoader} />
+        <Loader show={this.props.loading} />
         <Navbar />
         {/** Content */}
         <HOC>
-          <AlertComponent
-            show={showAlert}
-            variant={alertSuccess ? "success" : "danger"}
-            text={
-              alertSuccess
-                ? `Stripe coupon loaded`
-                : `Sripe coupon's failed to load`
-            }
-          />
           <CouponGenerator getCouponList={this.getCouponList} />
-          <CouponCodeList data={data} />
+          <CouponCodeList />
         </HOC>
       </>
     );
   }
 }
 
-export default HomePage;
+const mapStateToProps = (state) => ({
+  loading: state.couponList.loading,
+});
+
+export default connect(mapStateToProps, null)(HomePage);

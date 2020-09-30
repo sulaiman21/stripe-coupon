@@ -4,10 +4,10 @@ import { Form, FormControl, Button, Row, Col } from "react-bootstrap";
 import http from "../configs/http";
 import { urls } from "../configs/urls";
 import Alert from "./Alert";
+import { getCouponList } from "../utils/Functions";
 
 function CouponGenerator(props) {
   const [cName, setCouponName] = useState("");
-  const [cId, setCouponId] = useState("" | Number);
   const [cPercent, setCouponPercentage] = useState(Number);
   const [duration, setCouponDuration] = useState("once");
   const [failedToSave, setFailedToSave] = useState(false);
@@ -19,7 +19,6 @@ function CouponGenerator(props) {
   const handleFormSubmition = (e) => {
     e.preventDefault();
     const couponInputs = {
-      id: cId,
       percentOff: cPercent,
       duration: duration,
       duration_in_months: 1,
@@ -31,7 +30,7 @@ function CouponGenerator(props) {
     http
       .post(urls.createCouponCode, couponInputs)
       .then((res) => {
-        console.log(res);
+        getCouponList();
         return;
       })
       .catch((err) => {
@@ -60,22 +59,6 @@ function CouponGenerator(props) {
                 onChange(e, setCouponName);
               }}
               required
-            />
-          </Form.Group>
-        </Col>
-        <Col sm="12" lg="6">
-          <Form.Group>
-            <Form.Label htmlFor="cId">
-              Coupon ID <span>Optional</span>
-            </Form.Label>
-            <FormControl
-              name="cId"
-              id="cId"
-              value={cId}
-              placeholder="Coupon ID Optional"
-              onChange={(e) => {
-                onChange(e, setCouponId);
-              }}
             />
           </Form.Group>
         </Col>
