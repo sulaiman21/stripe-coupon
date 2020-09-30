@@ -3,11 +3,14 @@ import { Form, FormControl, Button, Row, Col } from "react-bootstrap";
 
 import http from "../configs/http";
 import { urls } from "../configs/urls";
+import Alert from "./Alert";
 
-function CouponGenerator() {
+function CouponGenerator(props) {
   const [cName, setCouponName] = useState("");
   const [cId, setCouponId] = useState("" | Number);
   const [cPercent, setCouponPercentage] = useState(Number);
+  const [duration, setCouponDuration] = useState("once");
+  const [failedToSave, setFailedToSave] = useState(false);
 
   const onChange = (e, stateToSet) => {
     stateToSet(e.target.value);
@@ -18,8 +21,9 @@ function CouponGenerator() {
     const couponInputs = {
       id: cId,
       percentOff: cPercent,
-      duration: "once",
+      duration: duration,
       duration_in_months: 1,
+      name: cName,
     };
 
     console.log(couponInputs);
@@ -32,55 +36,92 @@ function CouponGenerator() {
       })
       .catch((err) => {
         console.log(err);
+        setFailedToSave(true);
         return;
       });
   };
   return (
     <Form method="POST" onSubmit={handleFormSubmition}>
+      <Alert
+        show={failedToSave}
+        variant="danger"
+        text="Failed to crete coupon"
+      />
       <Row>
-        <Col sm="12" lg="3">
-          <Form.Label htmlFor="cName">Coupon Name *</Form.Label>
-          <FormControl
-            name="cName"
-            id="cName"
-            value={cName}
-            placeholder="Coupon Name *"
-            onChange={(e) => {
-              onChange(e, setCouponName);
-            }}
-          />
+        <Col sm="12" lg="6">
+          <Form.Group>
+            <Form.Label htmlFor="cName">Coupon Name *</Form.Label>
+            <FormControl
+              name="cName"
+              id="cName"
+              value={cName}
+              placeholder="Coupon Name *"
+              onChange={(e) => {
+                onChange(e, setCouponName);
+              }}
+              required
+            />
+          </Form.Group>
         </Col>
-        <Col sm="12" lg="3">
-          <Form.Label htmlFor="cId">
-            Coupon ID <span>Optional</span>
-          </Form.Label>
-          <FormControl
-            name="cId"
-            id="cId"
-            value={cId}
-            placeholder="Coupon ID Optional"
-            onChange={(e) => {
-              onChange(e, setCouponId);
-            }}
-          />
+        <Col sm="12" lg="6">
+          <Form.Group>
+            <Form.Label htmlFor="cId">
+              Coupon ID <span>Optional</span>
+            </Form.Label>
+            <FormControl
+              name="cId"
+              id="cId"
+              value={cId}
+              placeholder="Coupon ID Optional"
+              onChange={(e) => {
+                onChange(e, setCouponId);
+              }}
+            />
+          </Form.Group>
         </Col>
-        <Col sm="12" lg="3">
-          <Form.Label htmlFor="cPercent">Percent Off *</Form.Label>
-          <FormControl
-            name="cPercent"
-            id="cPercent"
-            value={cPercent}
-            type="number"
-            placeholder="Percentage Off *"
-            onChange={(e) => {
-              onChange(e, setCouponPercentage);
-            }}
-          />
+      </Row>
+      <Row>
+        <Col sm="12" lg="6">
+          <Form.Group>
+            <Form.Label htmlFor="cPercent">Percent Off *</Form.Label>
+            <FormControl
+              name="cPercent"
+              id="cPercent"
+              value={cPercent}
+              type="number"
+              placeholder="Percentage Off *"
+              onChange={(e) => {
+                onChange(e, setCouponPercentage);
+              }}
+              required
+            />
+          </Form.Group>
         </Col>
-        <Col sm="12" lg="3">
-          <Button type="submit" block>
-            Generate Coupon
-          </Button>
+        <Col sm="12" lg="6">
+          <Form.Group controlId="exampleForm.ControlSelect1">
+            <Form.Label>Example select</Form.Label>
+            <Form.Control
+              as="select"
+              required
+              onChange={(e) => {
+                onChange(e, setCouponDuration);
+              }}
+            >
+              <option value="">Select Duration *</option>
+              <option value="once">Once</option>
+              {/* <option value="repeating">Repeating</option> */}
+              <option value="forever">Forever</option>
+            </Form.Control>
+          </Form.Group>
+        </Col>
+      </Row>
+      <Row>
+        <Col sm="12" lg="12">
+          <Form.Group>
+            <Button type="submit" block>
+              Generate Coupon
+            </Button>
+          </Form.Group>
         </Col>
       </Row>
     </Form>

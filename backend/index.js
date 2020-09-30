@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 //routes
@@ -20,8 +19,6 @@ const app = express();
 app.use(cors());
 //data parser
 app.use(bodyParser.json());
-//cookie parser
-app.use(cookieParser());
 
 //api
 app.use("/stripe/api", stripe);

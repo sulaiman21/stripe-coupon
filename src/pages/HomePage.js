@@ -17,6 +17,13 @@ export class HomePage extends PureComponent {
     alertSuccess: false,
     data: [],
   };
+
+  getCouponList = () => {
+    http.post(urls.getCouponCodes).then((res) => {
+      this.setState({ data: res.data.response.data });
+    });
+  };
+
   componentDidMount() {
     //on home page load, get all coupon codes
     this.setState({ showLoader: true });
@@ -29,7 +36,6 @@ export class HomePage extends PureComponent {
           alertSuccess: true,
           data: res.data.response.data,
         });
-        console.log(res.data.response.data);
         return;
       })
       .catch((err) => {
@@ -60,7 +66,7 @@ export class HomePage extends PureComponent {
                 : `Sripe coupon's failed to load`
             }
           />
-          <CouponGenerator />
+          <CouponGenerator getCouponList={this.getCouponList} />
           <CouponCodeList data={data} />
         </HOC>
       </>

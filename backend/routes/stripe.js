@@ -30,6 +30,7 @@ router.post("/create-coupon", (req, res, next) => {
     percentOff: req.body.percentOff,
     duration: req.body.duration,
     duration_in_months: req.body.durationInMonths,
+    name: req.body.name,
   };
 
   //creating new coupon on the basis of user inputs
@@ -39,6 +40,7 @@ router.post("/create-coupon", (req, res, next) => {
       percent_off: couponInputs.percentOff,
       duration: couponInputs.duration,
       duration_in_months: couponInputs.duration_in_months,
+      name: couponInputs.name,
     })
     .then((response) => {
       return res.status(200).json({ response: response });
