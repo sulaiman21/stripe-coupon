@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, ButtonGroup, Table } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import http from "../configs/http";
 import { urls } from "../configs/urls";
 import ConfirmDialog from "./ConfirmDialog";
 import { getCouponList } from "../utils/Functions";
+import Alert from "./Alert";
 
 let couponId = ""; //it will store coupon id for edit or delete case
 
 function CouponCodeList() {
   const [showConfirm, setConfirmState] = useState(false);
-  const dispatch = useDispatch();
+  const [deleteSuccess, setDeleteState] = useState(false);
+  const [showAlert, setAlertState] = useState(false);
   const { data } = useSelector((state) => state.couponList);
 
   //fetching the all coupon list
@@ -19,8 +21,40 @@ function CouponCodeList() {
     getCouponList();
   }, []);
 
+  const onConfirmDeleteCoupon = () => {
+    const _data = {
+      couponId: couponId,
+    };
+
+    console.log(_data);
+
+    http
+      .post(urls.deleteCouponCode, data)
+      .then((res) => {
+        setConfirmState(false);
+        setAlertState(true);
+        setDeleteState(true);
+        getCouponList();
+        return;
+      })
+      .catch((err) => {
+        setConfirmState(false);
+        setAlertState(true);
+
+        setDeleteState(false);
+        console.log(err);
+        return;
+      });
+  };
+
   return (
     <>
+      <Alert
+        show={showAlert}
+        title={deleteSuccess ? "Success" : "Error"}
+        text={deleteSuccess ? "Code deleted!" : "Unable to delete code"}
+        variant={deleteSuccess ? "success" : "danger"}
+      />
       <Card style={{ marginTop: 10 }} border="primary">
         <Card.Header
           as="h5"
@@ -99,9 +133,7 @@ function CouponCodeList() {
         onCancel={() => {
           setConfirmState(false);
         }}
-        onConfirmDelete={() => {
-          setConfirmState(false);
-        }}
+        onConfirmDelete={onConfirmDeleteCoupon}
       />
     </>
   );

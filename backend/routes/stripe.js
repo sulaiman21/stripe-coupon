@@ -68,14 +68,14 @@ router.post("/get-coupon-codes", (req, res, next) => {
 });
 
 //delete coupon
-router.post("/delete-coupon", verify, (req, res, next) => {
+router.post("/delete-coupon", (req, res, next) => {
   stripe.coupons
     .del(req.body.couponId)
     .then((response) => {
       return res.status(200).json({ response: response });
     })
     .catch((err) => {
-      return res.status(500).json({ error: "Unable to create coupon code" });
+      return res.status(500).json({ error: "Unable to delete coupon code" });
     });
 });
 
